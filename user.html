@@ -1,0 +1,450 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 24px;
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-info {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: #e0f7fa;
+        }
+
+        .user-info p {
+            font-size: 18px;
+            margin: 5px 0;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background-color: #ffecb3;
+            padding: 15px;
+            border-radius: 10px;
+            width: 48%;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 14px;
+            display: none;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .submit-btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">User Dashboard</div>
+
+    <div class="container">
+        <!-- User Info -->
+        <div class="user-info">
+            <h3>User Details</h3>
+            <p><strong>Name:</strong> <span id="userName">John Doe</span></p>
+            <p><strong>Email:</strong> <span id="userEmail">johndoe@example.com</span></p>
+            <p><strong>Phone:</strong> <span id="userPhone">123-456-7890</span></p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats">
+            <div class="stat-box">Pets Adopted: <span id="petsAdopted">2</span></div>
+            <div class="stat-box">Pets Donated: <span id="petsDonated">1</span></div>
+        </div>
+
+        <!-- Adoption Requests -->
+        <h3>Adoption Requests</h3>
+        <table>
+            <tr>
+                <th>Pet Name</th>
+                <th>Request Date</th>
+                <th>Status</th>
+            </tr>
+            <tr>
+                <td>Bella</td>
+                <td>2025-03-10</td>
+                <td>Approved</td>
+            </tr>
+            <tr>
+                <td>Max</td>
+                <td>2025-03-05</td>
+                <td>Pending</td>
+            </tr>
+        </table>
+
+        <!-- Donation Requests -->
+        <h3>Donation Requests</h3>
+        <table>
+            <tr>
+                <th>Pet Name</th>
+                <th>Donation Date</th>
+                <th>Status</th>
+            </tr>
+            <tr>
+                <td>Rocky</td>
+                <td>2025-02-25</td>
+                <td>Completed</td>
+            </tr>
+        </table>
+
+        <!-- Update User Details Form -->
+        <h3>Update User Details</h3>
+        <form id="updateForm">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" required>
+                <p class="error-message" id="nameError">Name cannot be empty</p>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" required>
+                <p class="error-message" id="emailError">Enter a valid email</p>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone:</label>
+                <input type="text" id="phone" required>
+                <p class="error-message" id="phoneError">Enter a valid phone number (10 digits)</p>
+            </div>
+            <button type="submit" class="submit-btn">Update</button>
+        </form>
+    </div>
+
+    <script>
+        const nameInput = document.getElementById("name");
+        const emailInput = document.getElementById("email");
+        const phoneInput = document.getElementById("phone");
+        const nameError = document.getElementById("nameError");
+        const emailError = document.getElementById("emailError");
+        const phoneError = document.getElementById("phoneError");
+
+        function validateName() {
+            if (nameInput.value.trim() === "") {
+                nameError.style.display = "block";
+                return false;
+            } else {
+                nameError.style.display = "none";
+                return true;
+            }
+        }
+
+        function validateEmail() {
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailPattern.test(emailInput.value)) {
+                emailError.style.display = "block";
+                return false;
+            } else {
+                emailError.style.display = "none";
+                return true;
+            }
+        }
+
+        function validatePhone() {
+            const phonePattern = /^\d{10}$/;
+            if (!phonePattern.test(phoneInput.value)) {
+                phoneError.style.display = "block";
+                return false;
+            } else {
+                phoneError.style.display = "none";
+                return true;
+            }
+        }
+
+        nameInput.addEventListener("input", validateName);
+        emailInput.addEventListener("input", validateEmail);
+        phoneInput.addEventListener("input", validatePhone);
+
+        document.getElementById("updateForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            if (validateName() && validateEmail() && validatePhone()) {
+                alert("User details updated successfully!");
+            }
+        });
+    </script>
+
+</body>
+</html> -->
+
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="java.util.*, javax.servlet.http.*" %>
+<%@ page import="java.sql.*" %>
+<%
+    // Dummy user session (Replace with actual session handling)
+    String userName = "John Doe";
+    String userEmail = "johndoe@example.com";
+    String userPhone = "123-456-7890";
+    
+    int petsAdopted = 2;
+    int petsDonated = 1;
+
+    // Mock adoption & donation request data (Replace with database queries)
+    List<String[]> adoptionRequests = Arrays.asList(
+        new String[]{"Bella", "2025-03-10", "Approved"},
+        new String[]{"Max", "2025-03-05", "Pending"}
+    );
+
+    List<String[]> donationRequests = Arrays.asList(
+        new String[]{"Rocky", "2025-02-25", "Completed"}
+    );
+
+    // Handle form submission for updating user details
+    if (request.getMethod().equals("POST")) {
+        userName = request.getParameter("name");
+        userEmail = request.getParameter("email");
+        userPhone = request.getParameter("phone");
+
+        // Save new details (Implement database update logic here)
+    }
+%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 24px;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .user-info, .stats {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .user-info {
+            background-color: #e0f7fa;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-between;
+        }
+        .stat-box {
+            background-color: #ffecb3;
+            padding: 15px;
+            border-radius: 10px;
+            width: 48%;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .error-message {
+            color: red;
+            font-size: 14px;
+            display: none;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .submit-btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">User Dashboard</div>
+
+    <div class="container">
+        <!-- User Info -->
+        <div class="user-info">
+            <h3>User Details</h3>
+            <p><strong>Name:</strong> <%= userName %></p>
+            <p><strong>Email:</strong> <%= userEmail %></p>
+            <p><strong>Phone:</strong> <%= userPhone %></p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats">
+            <div class="stat-box">Pets Adopted: <%= petsAdopted %></div>
+            <div class="stat-box">Pets Donated: <%= petsDonated %></div>
+        </div>
+
+        <!-- Adoption Requests -->
+        <h3>Adoption Requests</h3>
+        <table>
+            <tr>
+                <th>Pet Name</th>
+                <th>Request Date</th>
+                <th>Status</th>
+            </tr>
+            <% for (String[] req : adoptionRequests) { %>
+            <tr>
+                <td><%= req[0] %></td>
+                <td><%= req[1] %></td>
+                <td><%= req[2] %></td>
+            </tr>
+            <% } %>
+        </table>
+
+        <!-- Donation Requests -->
+        <h3>Donation Requests</h3>
+        <table>
+            <tr>
+                <th>Pet Name</th>
+                <th>Donation Date</th>
+                <th>Status</th>
+            </tr>
+            <% for (String[] req : donationRequests) { %>
+            <tr>
+                <td><%= req[0] %></td>
+                <td><%= req[1] %></td>
+                <td><%= req[2] %></td>
+            </tr>
+            <% } %>
+        </table>
+
+        <!-- Update User Details Form -->
+        <h3>Update User Details</h3>
+        <form method="POST">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" value="<%= userName %>" required>
+                <p class="error-message" id="nameError">Name cannot be empty</p>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" value="<%= userEmail %>" required>
+                <p class="error-message" id="emailError">Enter a valid email</p>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone:</label>
+                <input type="text" id="phone" name="phone" value="<%= userPhone %>" required>
+                <p class="error-message" id="phoneError">Enter a valid phone number (10 digits)</p>
+            </div>
+            <button type="submit" class="submit-btn">Update</button>
+        </form>
+    </div>
+
+</body>
+</html>

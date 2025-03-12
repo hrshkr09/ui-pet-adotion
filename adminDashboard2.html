@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Adoption Admin Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+        }
+
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background-color: #4CAF50;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar h1 {
+            font-size: 22px;
+        }
+
+        .navbar .nav-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar .nav-right .profile {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .navbar .profile img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 60px;
+            bottom: 0;
+            width: 250px;
+            background-color: #333;
+            color: white;
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .sidebar-menu li:hover {
+            background-color: #555;
+        }
+
+        .sidebar-menu li.active {
+            background-color: #4CAF50;
+            border-left: 4px solid #fff;
+        }
+
+        .sidebar-menu i {
+            margin-right: 10px;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            margin-left: 250px;
+            margin-top: 60px;
+            padding: 20px;
+            width: calc(100% - 250px);
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .content-header h2 {
+            color: #333;
+        }
+
+        .action-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        /* Dashboard Sections */
+        .dashboard-section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-title {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            color: #333;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th, .data-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .data-table th {
+            background-color: #f9f9f9;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .data-table tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .status-pending {
+            background-color: #FFF3CD;
+            color: #856404;
+        }
+
+        .status-approved {
+            background-color: #D4EDDA;
+            color: #155724;
+        }
+
+        .status-rejected {
+            background-color: #F8D7DA;
+            color: #721C24;
+        }
+
+        /* Utilities */
+        .hidden {
+            display: none;
+        }
+
+        /* Profile Card */
+        .profile-card {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .profile-pic {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: #eee;
+            overflow: hidden;
+        }
+
+        .profile-pic img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-info h3 {
+            margin-bottom: 5px;
+        }
+
+        .profile-info p {
+            color: #666;
+            margin-bottom: 3px;
+        }
+
+        /* Pet Cards */
+        .pet-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .pet-card {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .pet-card-img {
+            height: 150px;
+            background-color: #eee;
+            overflow: hidden;
+        }
+
+        .pet-card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .pet-card-body {
+            padding: 15px;
+        }
+
+        .pet-card-body h4 {
+            margin-bottom: 5px;
+        }
+
+        .pet-card-body p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .pet-card-actions {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .btn-edit, .btn-delete {
+            background-color: #f0f0f0;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .btn-edit {
+            color: #4CAF50;
+        }
+
+        .btn-delete {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Navbar -->
+        <div class="navbar">
+            <h1>Pet Adoption Admin Dashboard</h1>
+            <div class="nav-right">
+                <div class="profile">
+                    <img src="https://api.placeholder.com/150" alt="Admin Avatar">
+                    <span>Admin User</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <ul class="sidebar-menu">
+                <li class="active" data-section="dashboard">
+                    <i>📊</i> Dashboard
+                </li>
+                <li data-section="user-profile">
+                    <i>👤</i> User Profile Management
+                </li>
+                <li data-section="adoption-requests">
+                    <i>🐾</i> Adoption Requests
+                </li>
+                <li data-section="donation-requests">
+                    <i>💰</i> Donation Requests
+                </li>
+                <li data-section="history">
+                    <i>📜</i> History
+                </li>
+                <li data-section="add-pet">
+                    <i>🐶</i> Add Pet
+                </li>
+                <li data-section="settings">
+                    <i>⚙️</i> Settings
+                </li>
+                <li data-section="logout">
+                    <i>🚪</i> Logout
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Dashboard Overview Section -->
+            <div id="dashboard" class="dashboard-content">
+                <div class="content-header">
+                    <h2>Dashboard Overview</h2>
+                    <button class="action-btn">Generate Report</button>
+                </div>
+
+                <div class="dashboard-section">
+                    <h3 class="section-title">Key Statistics</h3>
+                    <div style="display: flex; gap: 20px;">
+                        <div style="flex: 1; background-color: #e3f2fd; padding: 15px; border-radius: 8px; text-align: center;">
+                            <h4>Total Pets</h4>
+                            <p style="font-size: 24px; margin: 10px 0; font-weight: bold; color: #1976d2;">142</p>
+                            <p style="color: #666;">22 new this month</p>
+                        </div>
+                        <div style="flex: 1; background-color: #e8f5e9; padding: 15px; border-radius: 8px; text-align: center;">
+                            <h4>Adoptions</h4>
+                            <p style="font-size: 24px; margin: 10px 0; font-weight: bold; color: #388e3c;">87</p>
+                            <p style="color: #666;">12 pending requests</p>
+                        </div>
+                        <div style="flex: 1; background-color: #fff8e1; padding: 15px; border-radius: 8px; text-align: center;">
+                            <h4>Donations</h4>
+                            <p style="font-size: 24px; margin: 10px 0; font-weight: bold; color: #ffa000;">$12,450</p>
+                            <p style="color: #666;">+18% from last month</p>
+                        </div>
+                        <div style="flex: 1; background-color: #fce4ec; padding: 15px; border-radius: 8px; text-align: center;">
+                            <h4>Users</h4>
+                            <p style="font-size: 24px; margin: 10px 0; font-weight: bold; color: #d81b60;">324</p>
+                            <p style="color: #666;">45 new this month</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-section">
+                    <h3 class="section-title">Recent Adoption Requests</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>User</th>
+                                <th>Pet</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#AD-2023</td>
+                                <td>John Smith</td>
+                                <td>Max (Golden Retriever)</td>
+                                <td>Mar 10, 2025</td>
+                                <td><span class="status status-pending">Pending</span></td>
+                                <td>
+                                    <button class="action-btn">Review</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#AD-2022</td>
+                                <td>Sarah Johnson</td>
+                                <td>Luna (Siamese Cat)</td>
+                                <td>Mar 9, 2025</td>
+                                <td><span class="status status-approved">Approved</span></td>
+                                <td>
+                                    <button class="action-btn">Details</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#AD-2021</td>
+                                <td>Michael Brown</td>
+                                <td>Rocky (Bulldog)</td>
+                                <td>Mar 8, 2025</td>
+                                <td><span class="status status-rejected">Rejected</span></td>
+                                <td>
+                                    <button class="action-btn">Details</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- User Profile Management Section -->
+            <div id="user-profile" class="dashboard-content hidden">
+                <div class="content-header">
+                    <h2>User Profile Management</h2>
+                    <button class="action-btn">Add New User</button>
+                </div>
+
+                <div class="dashboard-section">
+                    <h3 class="section-title">User Profiles</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Registered</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#USR-1001</td>
+                                <td>John Smith</td>
+                                <td>john.smith@example.com</td>
+                                <td>(555) 123-4567</td>
+                                <td>Jan 15, 2025</td>
+                                <td><span class="status status-approved">Active</span></td>
+                                <td>
+                                    <button class="action-btn">Edit</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#USR-1002</td>
+                                <td>Sarah Johnson</td>
+                                <td>sarah.j@example.com</td>
+                                <td>(555) 987-6543</td>
+                                <td>Feb 2, 2025</td>
+                                <td><span class="status status-approved">Active</span></td>
+                                <td>
+                                    <button class="action-btn">Edit</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#USR-1003</td>
+                                <td>Michael Brown</td>
+                                <td>m.brown@example.com</td>
+                                <td>(555) 456-7890</td>
+                                <td>Mar 5, 2025</td>
+                                <td><span class="status status-pending">Pending</span></td>
+                                <td>
+                                    <button class="action-btn">Edit</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="dashboard-section">
+                    <h3 class="section-title">User Profile Details</h3>
+                    <div class="profile-card">
+                        <div class="profile-pic">
+                            <img src="https://api.placeholder.com/150" alt="User Avatar">
+                        </div>
+                        <div class="profile-info">
+                            <h3>John Smith</h3>
+                            <p>Email: john.smith@example.com</p>
+                            <p>Phone: (555) 123-4567</p>
+                            <p>Address: 123 Main St, Anytown, USA</p>
+                            <p>Member since: January 15, 2025</p>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="user-status">Status:</label>
+                        <select id="user-status" class="form-control">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="suspended">Suspended</option>
+                        </select>
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <button class="action-btn">Save Changes</button>
+                        <button style="background-color: #f44336; margin-left: 10px;" class="action-btn">Deactivate Account</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Adoption Requests Section -->
+            <div id="adoption-requests" class="dashboard-content hidden">
+                <div class="content-header">
+                    <h2>Adoption Requests</h2>
+                    <button class="action-btn">Export List</button>
+                </div>
+
+                <div class="dashboard-section">
+                    <h3 class="section-title">Pending Requests</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Request ID</th>
+                                <th>User</th>
+                                <th>Pet</th>
+                                <th>Submission Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#AD-2023</td>
+                                <td>John Smith</td>
+                                <td>Max (Golden Retriever)</td>
+                                <td>Mar 10, 2025</td>
+                                <td><span class="status status-pending">Pending</span></td>
+                                <td>
+                                    <button class="action-btn">Review</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#AD-2020</td>
+                                <td>Emily Davis</td>
+                                <td>Bella (Labrador)</td>
+                                <td>Mar 7, 2025</td>
+                                <td><span class="status status-pending">Pending</span></td>
+                                <td>
+                                    <button class="action-btn">Review</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#AD-2019</td>
+                                <td>David Miller</td>
+                                <td>Oliver (Tabby Cat)</td>
+                                <td>Mar 6, 2025</td>
+                                <td><span class="status status-pending">Pending</span></td>
+                                <td>
+                                    <button class="action-btn">Review</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="dashboard-section">
+                    <h3 class="section-title">Request Review</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Request ID:</label>
+                            <p>#AD-2023</p>
+                        </div>
+                        <div class="form-group">
+                            <label>Submission Date:</label>
+                            <p>Mar 10, 2025</p>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Applicant:</label>
+                            <p>John Smith</p>
+                        </div>
+                        <div class="form-group">
+                            <label>Pet:</label>
+                            <p>Max (Golden Retriever)</p>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Application Notes:</label>
+                        <p>John has a large fenced backyard and works from home, so he can spend a lot of time with the dog. He has previous experience with Golden Retrievers and currently doesn't have any other pets.</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="admin-notes">Admin Notes:</label>
+                        <textarea id="admin-notes" class="form-control" rows="4"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="request-status">Decision:</label>
+                        <select id="request-status" class="form-control">
+                            <option value="">Select decision</option>
+                            <option value="approved">Approve</option>
+                            <option value="rejected">Reject</option>
+                            <option value="pending">Keep Pending</option>
+                        </select>
+                    </div>
+                    
+                    <button class="action-btn">Submit Decision</button>
+                </div>
+            </div>
+
+            <!-- Donation Requests Section -->
+            <div id="donation-requests" class="dashboard-content hidden">
+                <div class="content-header">
+                    <h2>Donation Requests</h2>
+                    <button class="action-btn">Generate Report</button>
+                </div>
+
+                <div class="dashboard-section">
+                    <h3 class="section-title">Recent Donations</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Donation ID</th>
+                                <th>Donor</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#DON-3045</td>
+                                <td>Jennifer Wilson</td>
+                                <td>$150.00</td>
+                                <td>Mar 10, 2025</td>
+                                <td>One-time</td>
+                                <td><span class="status status-approved">Completed</span></td>
+                                <td>
+                                    <button class="action-btn">Details</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#DON-3044</td>
+                                <td>Robert Garcia</td>
+                                <td>$50.00</td>
+                                <td>Mar 9, 2025</td>
+                                <td>Monthly</td>
+                                <td><span class="status status-approved">Active</span></td>
+                                <td>
+                                    <button class="action-btn">Details</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#DON-3043</td>
+                                <td>Anonymous</td>
+                                <td>$200.00</td>
+                                <td>Mar 8, 2025</td>
+                                <td>One-time</td>
+                                <td><span class="status status-pending">Processing</span></td>
+                                <td>
+                                    <button class="action-btn">Details</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="dashboard-section">
+                    <h3 class="section-title">Non-Monetary Donations</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Donor</th>
+                                <th>Items</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#ND-1022</td>
+                                <td>Lisa Thompson</td>
+                                <td>Pet Food (50lbs), Blankets (5), Toys (10)</td>
+                                <td>Mar 10, 2025</td>
+                                <td><span class="status status-pending">Pending Pickup</span></td>
+                                <td>
+                                    <button class="action-btn">Manage</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#ND-1021</td>
+                                <td>Mark Wilson</td>
+                                <td>Cat Litter (30lbs), Cat Carriers (2)</td>
+                                <td>Mar 8, 2025</td>
+                                <td><span class="status status-approved">Received</span></td>
+                                <td>
+                                    <button class="action-btn">Details</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- History Section -->
+            <div id="history" class="dashboard-content hidden">
+                <div class="content-header">
+                    <h2>Activity History</h2>
+                    <div>
+                        <input type="date" style="padding: 8px; margin-right: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                        <button class="action-btn">Filter</button>
+                    </div>
+                </div>
+
+                <div class="dashboard-section">
+                    <h3 class="section-title">Adoption History</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Adopter</th>
+                                <th>Pet</th>
+                                <th>Adoption Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#AD-2022</td>
+                                <td>Sarah Johnson</td>
+                                <td>Luna (Siamese Cat)</td>
+                                <td>Mar 9, 2025</td>
+                                <td><span class="status status-approved">Completed</span></td>
+                                <td>
+                                    <button class="action-btn">View</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#AD-2018</td>
+                                <td>Thomas Anderson</td>
+                                <td>Charlie (Beagle)</td>
+                                <td>Mar 5, 2025</td>
+                                <td><span class="status status-approved">Completed</span></td>
+                                <td>
+                                    <button class="action-btn">View</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#AD-2017</td>
+                                <td>Jessica Williams</td>
+                                <td>Daisy (Calico Cat)</td>
+                                <td>Mar 3, 2025</td>
+                                <td><span class="status status-approved">Completed</span></td>
+                                <td>
+                                    <button class="action-btn">View</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="dashboard-section">
+                    <h3 class="section-title">System Logs</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>User</th>
+                                <th>Action</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Mar 10, 2025 15:42</td>
+                                <td>Admin User</td>
+                                <td>Pet Added</td>
+                                <td>Added new pet: Buddy (Labrador Retriever)</td>
+                            </tr>
+                            <tr>
+                                <td>Mar 10, 2025 14:30</td>
+                                <td>Admin User</td>
+                                <td>Adoption Request Approved</td>
+                                <td>Approved request #AD-2022 for Sarah Johnson</td>
+                            </tr>
+                            <tr>
+                                <td>Mar 10, 2025 11:15</td>
+                                <td>Admin User</td>
+                                <td>User Updated</td>
+                                <td>Updated user profile for Michael Brown</td>
+                            </tr>
+                            <tr>
+                                <td>Mar 9, 2025 16:22</td>
+                                <td>Admin User</td>
+                                <td>Donation Processed</td>
+                                <td>Processed donation #DON-3044 from Robert Garcia</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Add Pet Section -->
+        </body>
+        </html>
