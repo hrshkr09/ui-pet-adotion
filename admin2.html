@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - Pet Adoption</title>
+    <link rel="stylesheet" href="admin.css" />
+  </head>
+  <body>
+    <div class="navbar">
+      <span class="hamburger" onclick="toggleSidebar()">☰</span>
+      <span>Admin Dashboard</span>
+      <button class="logout-btn">Logout</button>
+    </div>
+    <div class="main-container">
+      <div class="sidebar" id="sidebar">
+        <ul>
+          <li onclick="showSection('profile')">User Profile Management</li>
+          <li onclick="showSection('adoption')">Adoption Requests</li>
+          <li onclick="showSection('donation')">Donation Requests</li>
+          <li onclick="showSection('history')">History</li>
+          <li onclick="showSection('addPet')">Add Pet</li>
+        </ul>
+        <div class="profile-section" onclick="showSection('admin-profile')">
+          <span class="profile-icon">👤</span>
+          <p>Admin Profile</p>
+        </div>
+      </div>
+      <div class="content">
+        <div id="profile" class="section active">
+          <h2>User Profile Management</h2>
+          <div class="card">
+            <h3>User Details</h3>
+            <p><strong>User ID:</strong> U12345</p>
+            <p><strong>Name:</strong> John Doe</p>
+            <p><strong>Contact:</strong> +1234567890</p>
+            <p><strong>Email:</strong> johndoe@example.com</p>
+            <p><strong>Address:</strong> 123 Pet Lane, Pet City</p>
+            <p><strong>Pets Adopted:</strong> 3</p>
+            <p><strong>Pets Donated:</strong> 2</p>
+          </div>
+        </div>
+        <div id="adoption" class="section">
+          <h2>Adoption Requests</h2>
+          <div class="card">
+            <h3>Adoption Request</h3>
+            <p><strong>Request ID:</strong> A56789</p>
+            <p><strong>Pet ID:</strong> P3456</p>
+            <p><strong>Adopter ID:</strong> U78901</p>
+            <p><strong>Request Date:</strong> 2025-03-11</p>
+            <p><strong>Status:</strong> Pending</p>
+            <button class="btn approve">Approve</button>
+            <button class="btn reject">Reject</button>
+          </div>
+        </div>
+        <div id="donation" class="section">
+          <h2>Donation Requests</h2>
+          <div class="card">
+            <h3>Donation Request</h3>
+            <p><strong>Request ID:</strong> D67890</p>
+            <p><strong>Donor ID:</strong> U23456</p>
+            <p><strong>Type of Pet Donated:</strong> Dog</p>
+            <p><strong>Request Date:</strong> 2025-03-11</p>
+            <p><strong>Status:</strong> Pending</p>
+            <button class="btn approve">Approve</button>
+            <button class="btn reject">Reject</button>
+          </div>
+        </div>
+        <div id="history" class="section">
+          <h2>History</h2>
+          <div class="card">
+            <h3>Total Pets Adopted</h3>
+            <p><strong>Count:</strong> 50</p>
+          </div>
+          <div class="card">
+            <h3>Total Pets Donated</h3>
+            <p><strong>Count:</strong> 30</p>
+          </div>
+        </div>
+        <div id="addPet" class="section">
+          <h2>Add Pet</h2>
+          <div class="card">
+            <form>
+              <div class="form-group">
+                <label for="petPhoto">Pet Photo:</label>
+                <input type="file" id="petPhoto" accept="image/*" />
+              </div>
+              <div class="form-group">
+                <label for="petName">Pet Name:</label>
+                <input type="text" id="petName" required />
+              </div>
+              <div class="form-group">
+                <label for="petType">Type of Pet:</label>
+                <select id="petType" required>
+                  <option value="dog">Dog</option>
+                  <option value="cat">Cat</option>
+                  <option value="rabbit">Rabbit</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="petAge">Age:</label>
+                <input type="number" id="petAge" required />
+              </div>
+              <div class="form-group">
+                <label for="petGender">Gender:</label>
+                <select id="petGender" required>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="petDescription">Short Description:</label>
+                <textarea id="petDescription" rows="3" required></textarea>
+              </div>
+              <button type="submit">Save</button>
+            </form>
+          </div>
+        </div>
+        <div id="admin-profile" class="section">
+          <h2>Admin Profile</h2>
+          <div class="profile-card">
+            <img
+              src="https://images.unsplash.com/photo-1511367461989-f85a21fda167?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt="Admin Profile Picture"
+            />
+            <p><strong>Name:</strong> Admin</p>
+            <p><strong>Contact:</strong> +1234567890</p>
+            <p><strong>Email:</strong> admin@example.com</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      function showSection(sectionId) {
+        document.querySelectorAll(".section").forEach((section) => {
+          section.classList.remove("active");
+        });
+        document.getElementById(sectionId).classList.add("active");
+        if (window.innerWidth <= 768) {
+          document.getElementById("sidebar").classList.remove("active");
+        }
+      }
+
+      function validateForm(event) {
+        event.preventDefault();
+
+        let petPhoto = document.getElementById("petPhoto").value;
+        let petName = document.getElementById("petName").value.trim();
+        let petType = document.getElementById("petType").value;
+        let petAge = document.getElementById("petAge").value;
+        let petGender = document.getElementById("petGender").value;
+        let petDescription = document
+          .getElementById("petDescription")
+          .value.trim();
+
+        let errors = [];
+
+        if (!petPhoto) {
+          errors.push("Please upload a pet photo.");
+        }
+        if (petName.length < 3) {
+          errors.push("Pet name must be at least 3 characters long.");
+        }
+        if (!petType) {
+          errors.push("Please select a pet type.");
+        }
+        if (!petAge || petAge <= 0) {
+          errors.push("Please enter a valid age.");
+        }
+        if (!petGender) {
+          errors.push("Please select a gender.");
+        }
+        if (petDescription.length < 10) {
+          errors.push("Description must be at least 10 characters long.");
+        }
+
+        if (errors.length > 0) {
+          alert(errors.join("\n"));
+        } else {
+          alert("Pet added successfully!");
+          document.getElementById("addPetForm").reset();
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        document
+          .getElementById("addPetForm")
+          .addEventListener("submit", validateForm);
+      });
+      function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("active");
+      }
+    </script>
+  </body>
+</html>
+
+<!-- <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - Pet Adoption</title>
+    <link rel="stylesheet" href="admin.css">
+  </head>
+  <body>
+    <div class="navbar">
+      <span class="hamburger" onclick="toggleSidebar()">☰</span>
+      <span>Admin Dashboard</span>
+      <button class="logout-btn">Logout</button>
+    </div>
+
+    <div class="main-container">
+      <div class="sidebar" id="sidebar">
+        <ul>
+          <li onclick="showSection('profile')">User Profile Management</li>
+          <li onclick="showSection('adoption')">Adoption Requests</li>
+          <li onclick="showSection('donation')">Donation Requests</li>
+          <li onclick="showSection('history')">History</li>
+          <li onclick="showSection('addPet')">Add Pet</li>
+        </ul>
+        <div class="profile-section" onclick="showSection('admin-profile')">
+          <span class="profile-icon">👤</span>
+          <p>Admin Profile</p>
+        </div>
+      </div>
+
+      <div class="content">
+        <%-- User Profile Management Section --%>
+        <div id="profile" class="section active">
+          <h2>User Profile Management</h2>
+          <div class="card">
+            <h3>User Details</h3>
+            <%
+              String userId = "U12345";
+              String userName = "John Doe";
+              String userContact = "+1234567890";
+              String userEmail = "johndoe@example.com";
+              String userAddress = "123 Pet Lane, Pet City";
+              int petsAdopted = 3;
+              int petsDonated = 2;
+            %>
+            <p><strong>User ID:</strong> <%= userId %></p>
+            <p><strong>Name:</strong> <%= userName %></p>
+            <p><strong>Contact:</strong> <%= userContact %></p>
+            <p><strong>Email:</strong> <%= userEmail %></p>
+            <p><strong>Address:</strong> <%= userAddress %></p>
+            <p><strong>Pets Adopted:</strong> <%= petsAdopted %></p>
+            <p><strong>Pets Donated:</strong> <%= petsDonated %></p>
+          </div>
+        </div>
+
+        <%-- Adoption Requests Section --%>
+        <div id="adoption" class="section">
+          <h2>Adoption Requests</h2>
+          <div class="card">
+            <h3>Adoption Request</h3>
+            <%
+              String adoptionRequestId = "A56789";
+              String petId = "P3456";
+              String adopterId = "U78901";
+              String adoptionDate = "2025-03-11";
+              String adoptionStatus = "Pending";
+            %>
+            <p><strong>Request ID:</strong> <%= adoptionRequestId %></p>
+            <p><strong>Pet ID:</strong> <%= petId %></p>
+            <p><strong>Adopter ID:</strong> <%= adopterId %></p>
+            <p><strong>Request Date:</strong> <%= adoptionDate %></p>
+            <p><strong>Status:</strong> <%= adoptionStatus %></p>
+            <button class="btn approve">Approve</button>
+            <button class="btn reject">Reject</button>
+          </div>
+        </div>
+
+        <%-- Donation Requests Section --%>
+        <div id="donation" class="section">
+          <h2>Donation Requests</h2>
+          <div class="card">
+            <h3>Donation Request</h3>
+            <%
+              String donationRequestId = "D67890";
+              String donorId = "U23456";
+              String petType = "Dog";
+              String donationDate = "2025-03-11";
+              String donationStatus = "Pending";
+            %>
+            <p><strong>Request ID:</strong> <%= donationRequestId %></p>
+            <p><strong>Donor ID:</strong> <%= donorId %></p>
+            <p><strong>Type of Pet Donated:</strong> <%= petType %></p>
+            <p><strong>Request Date:</strong> <%= donationDate %></p>
+            <p><strong>Status:</strong> <%= donationStatus %></p>
+            <button class="btn approve">Approve</button>
+            <button class="btn reject">Reject</button>
+          </div>
+        </div>
+
+        <%-- History Section --%>
+        <div id="history" class="section">
+          <h2>History</h2>
+          <div class="card">
+            <h3>Total Pets Adopted</h3>
+            <p><strong>Count:</strong> <%= 50 %></p>
+          </div>
+          <div class="card">
+            <h3>Total Pets Donated</h3>
+            <p><strong>Count:</strong> <%= 30 %></p>
+          </div>
+        </div>
+
+        <%-- Add Pet Section --%>
+        <div id="addPet" class="section">
+          <h2>Add Pet</h2>
+          <div class="card">
+            <form action="add_pet.jsp" method="post">
+              <div class="form-group">
+                <label for="petPhoto">Pet Photo:</label>
+                <input type="file" id="petPhoto" accept="image/*" />
+              </div>
+              <div class="form-group">
+                <label for="petName">Pet Name:</label>
+                <input type="text" id="petName" name="petName" required />
+              </div>
+              <div class="form-group">
+                <label for="petType">Type of Pet:</label>
+                <select id="petType" name="petType" required>
+                  <option value="dog">Dog</option>
+                  <option value="cat">Cat</option>
+                  <option value="rabbit">Rabbit</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="petAge">Age:</label>
+                <input type="number" id="petAge" name="petAge" required />
+              </div>
+              <div class="form-group">
+                <label for="petGender">Gender:</label>
+                <select id="petGender" name="petGender" required>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="petDescription">Short Description:</label>
+                <textarea id="petDescription" name="petDescription" rows="3" required></textarea>
+              </div>
+              <button type="submit">Save</button>
+            </form>
+          </div>
+        </div>
+
+        <%-- Admin Profile Section --%>
+        <div id="admin-profile" class="section">
+          <h2>Admin Profile</h2>
+          <div class="profile-card">
+            <img src="https://images.unsplash.com/photo-1511367461989-f85a21fda167?q=80&w=1931&auto=format&fit=crop" alt="Admin Profile Picture" />
+            <p><strong>Name:</strong> Admin</p>
+            <p><strong>Contact:</strong> +1234567890</p>
+            <p><strong>Email:</strong> admin@example.com</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function showSection(sectionId) {
+        document.querySelectorAll(".section").forEach((section) => {
+          section.classList.remove("active");
+        });
+        document.getElementById(sectionId).classList.add("active");
+      }
+
+      function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("active");
+      }
+    </script>
+  </body>
+</html> -->
